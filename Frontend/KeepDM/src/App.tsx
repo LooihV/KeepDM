@@ -2,10 +2,13 @@ import { Routes, Route, Link } from 'react-router-dom'
 import './App.css'
 import { LoginForm } from '@/components/login-form'
 import { SignupForm } from '@/components/signup-form'
-import { AppSidebar } from '@/components/app-sidebar'
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
+import { PageLayout } from '@/components/page-layout'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Button } from '@/components/ui/button'
+import { Dashboard } from '@/views/dashboard'
+import { TableManager } from '@/views/table-manager'
+import { Table } from '@/views/table'
+import { Upload } from '@/views/upload'
 
 function App() {
   return (
@@ -27,18 +30,24 @@ function App() {
         </div>
       } />
       <Route path="/dashboard" element={
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <div className="p-4">
-              <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Dashboard</h1>
-                <ModeToggle />
-              </div>
-              <p>Bienvenido al dashboard</p>
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
+        <PageLayout breadcrumbPage="Dashboard">
+          <Dashboard />
+        </PageLayout>
+      } />
+      <Route path="/table-manager" element={
+        <PageLayout breadcrumbPage="Gestor de Tablas">
+          <TableManager />
+        </PageLayout>
+      } />
+      <Route path="/table" element={
+        <PageLayout breadcrumbPage="Tablas">
+          <Table />
+        </PageLayout>
+      } />
+      <Route path="/upload" element={
+        <PageLayout breadcrumbPage="Cargar Datos">
+          <Upload />
+        </PageLayout>
       } />
       <Route path="/" element={
         <div className="flex items-center justify-center min-h-screen">
