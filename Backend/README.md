@@ -1,0 +1,17 @@
+# KeepDM
+
+## Env config
+
+.env example:
+
+```bash
+JWT_SECRET_KEY=super_secret_key
+JWT_ALGORITHM=HS256
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+MONGO_HOST=localhost
+MONGO_PORT=27017
+MONGO_INITDB_ROOT_USERNAME=admin
+MONGO_INITDB_ROOT_PASSWORD=password
+MONGO_DB=keepdm_db
+```

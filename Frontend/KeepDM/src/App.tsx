@@ -3,6 +3,8 @@ import './App.css'
 import { LoginForm } from '@/components/login-form'
 import { SignupForm } from '@/components/signup-form'
 import { PageLayout } from '@/components/page-layout'
+import { ProtectedRoute } from '@/components/protected-route'
+import { PublicRoute } from '@/components/public-route'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Button } from '@/components/ui/button'
 import { Dashboard } from '@/views/dashboard'
@@ -14,40 +16,52 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={
-        <div className="min-h-screen flex items-center justify-center relative">
-          <div className="absolute top-4 right-4">
-            <ModeToggle />
+        <PublicRoute>
+          <div className="min-h-screen flex items-center justify-center relative">
+            <div className="absolute top-4 right-4">
+              <ModeToggle />
+            </div>
+            <LoginForm />
           </div>
-          <LoginForm />
-        </div>
+        </PublicRoute>
       } />
       <Route path="/signup" element={
-        <div className="min-h-screen flex items-center justify-center relative">
-          <div className="absolute top-4 right-4">
-            <ModeToggle />
+        <PublicRoute>
+          <div className="min-h-screen flex items-center justify-center relative">
+            <div className="absolute top-4 right-4">
+              <ModeToggle />
+            </div>
+            <SignupForm />
           </div>
-          <SignupForm />
-        </div>
+        </PublicRoute>
       } />
       <Route path="/dashboard" element={
-        <PageLayout breadcrumbPage="Dashboard">
-          <Dashboard />
-        </PageLayout>
+        <ProtectedRoute>
+          <PageLayout breadcrumbPage="Dashboard">
+            <Dashboard />
+          </PageLayout>
+        </ProtectedRoute>
       } />
       <Route path="/table-manager" element={
-        <PageLayout breadcrumbPage="Gestor de Tablas">
-          <TableManager />
-        </PageLayout>
+        <ProtectedRoute>
+          <PageLayout breadcrumbPage="Gestor de Tablas">
+            <TableManager />
+          </PageLayout>
+        </ProtectedRoute>
       } />
       <Route path="/table" element={
-        <PageLayout breadcrumbPage="Tablas">
-          <Table />
-        </PageLayout>
+        <ProtectedRoute>
+          <PageLayout breadcrumbPage="Tablas">
+            <Table />
+          </PageLayout>
+        </ProtectedRoute>
       } />
       <Route path="/upload" element={
-        <PageLayout breadcrumbPage="Cargar Datos">
-          <Upload />
-        </PageLayout>
+        <ProtectedRoute>
+          <PageLayout breadcrumbPage="Cargar Datos">
+            <Upload />
+          </PageLayout>
+        </ProtectedRoute>
       } />
       <Route path="/" element={
         <div className="flex items-center justify-center min-h-screen">
