@@ -8,6 +8,7 @@ import { PublicRoute } from '@/components/public-route'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Button } from '@/components/ui/button'
 import { Dashboard } from '@/views/dashboard'
+import { DashboardDetail } from '@/views/dashboard-detail'
 import { TableManager } from '@/views/table-manager'
 import { Table } from '@/views/table'
 import { Upload } from '@/views/upload'
@@ -46,6 +47,13 @@ function App() {
         <ProtectedRoute>
           <PageLayout breadcrumbPage="Dashboard">
             <Dashboard />
+          </PageLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/dashboard/:id" element={
+        <ProtectedRoute>
+          <PageLayout breadcrumbPage="Dashboard">
+            <DashboardDetail />
           </PageLayout>
         </ProtectedRoute>
       } />
