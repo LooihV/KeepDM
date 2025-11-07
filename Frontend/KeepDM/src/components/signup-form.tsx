@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
+import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -65,13 +66,23 @@ export function SignupForm({
         password: formData.password,
       })
       
-      // Redirigir al login después de registro exitoso
-      navigate("/login")
+      toast.success("Cuenta creada exitosamente", {
+        description: "Ya puedes iniciar sesión con tu cuenta",
+      })
+      
+      // Redirigir al login después de registro exitoso con delay
+      setTimeout(() => navigate("/login"), 1500)
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message || "Error al crear la cuenta. Por favor, intenta de nuevo.")
+        toast.error("Error al crear la cuenta", {
+          description: err.message || "Por favor, intenta de nuevo",
+        })
       } else {
         setError("Error al crear la cuenta. Por favor, intenta de nuevo.")
+        toast.error("Error al crear la cuenta", {
+          description: "Por favor, intenta de nuevo",
+        })
       }
     } finally {
       setIsLoading(false)

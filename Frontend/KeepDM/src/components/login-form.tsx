@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
+import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -39,9 +40,16 @@ export function LoginForm({
         username: username,
         password: password,
       })
+      toast.success("Inicio de sesión exitoso", {
+        description: `Bienvenido de vuelta, ${username}!`,
+      })
       navigate("/dashboard")
     } catch (err: any) {
-      setError(err.response?.data?.detail || "Login failed. Please try again.")
+      const errorMessage = err.response?.data?.detail || "Login failed. Please try again."
+      setError(errorMessage)
+      toast.error("Error al iniciar sesión", {
+        description: errorMessage,
+      })
     } finally {
       setIsLoading(false)
     }

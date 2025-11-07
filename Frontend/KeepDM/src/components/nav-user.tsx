@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 import {
   ChevronsUpDown,
   LogOut,
@@ -50,7 +51,10 @@ export function NavUser() {
   }, [])
 
   const handleLogout = () => {
-    authService.logout()
+    toast.success("Sesión cerrada", {
+      description: "Has cerrado sesión correctamente",
+    })
+    setTimeout(() => authService.logout(), 1500)
   }
 
   if (!user) {
