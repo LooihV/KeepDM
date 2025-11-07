@@ -30,6 +30,11 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
+      if (error.response.status === 401) {
+        console.warn('Token expirado o no válido. Redirigiendo al login...')
+        localStorage.removeItem('token')
+        window.location.href = '/login'
+      }
       console.error('Error de respuesta:', error.response.data)
     } else if (error.request) {
       console.error('Error de red:', error.request)

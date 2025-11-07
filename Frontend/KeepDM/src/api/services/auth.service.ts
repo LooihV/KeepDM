@@ -34,7 +34,11 @@ export const authService = {
   },
 
   logout: () => {
+    // Eliminar el token del localStorage
     localStorage.removeItem('token')
+    
+    // Redirigir a la página de login
+    window.location.href = '/login'
   },
 
   getToken: (): string | null => {
