@@ -15,6 +15,7 @@ import { Profile } from '@/views/profile'
 import { Templates } from '@/views/templates'
 import { TemplateCreate } from '@/views/template-create'
 import { TemplateDetail } from '@/views/template-detail'
+import { TemplateEdit } from '@/views/template-edit'
 
 function App() {
   return (
@@ -92,6 +93,13 @@ function App() {
         <ProtectedRoute>
           <PageLayout breadcrumbPage="Detalle del Template">
             <TemplateDetail />
+          </PageLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/templates/:id/edit" element={
+        <ProtectedRoute>
+          <PageLayout breadcrumbPage="Editar Template">
+            <TemplateEdit />
           </PageLayout>
         </ProtectedRoute>
       } />

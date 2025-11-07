@@ -13,7 +13,8 @@ import {
   Calendar, 
   Check, 
   Mail,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Pencil
 } from "lucide-react"
 import { templateService, type Template } from "@/api/services/template.service"
 
@@ -155,6 +156,14 @@ export function TemplateDetail() {
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Volver
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate(`/templates/${id}/edit`)}
+              disabled={isDownloading}
+            >
+              <Pencil className="h-4 w-4 mr-2" />
+              Editar
             </Button>
             <Button onClick={handleDownloadExcel} disabled={isDownloading}>
               <Download className="h-4 w-4 mr-2" />

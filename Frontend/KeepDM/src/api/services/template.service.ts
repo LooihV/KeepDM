@@ -36,4 +36,9 @@ export const templateService = {
     })
     return response.data
   },
+
+  update: async (id: string, data: CreateTemplateRequest): Promise<Template> => {
+    const response = await apiClient.put<Template>(`/api/templates/${id}`, data)
+    return response.data
+  },
 }
