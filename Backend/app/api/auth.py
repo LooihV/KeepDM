@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from app.models.models import UserCreate, UserResponse, Token
+from app.models.models import UserCreate, UserResponse, Token, UserInDB
 from app.crud.user import (
     create_user,
     authenticate_user,
     get_user_by_username,
     get_user_by_email,
 )
-from app.auth.security import create_access_token, decode_access_token, oauth2_scheme
+from app.auth.security import create_access_token
+from app.core.dependencies import get_current_active_user
 from pymongo.errors import DuplicateKeyError
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -55,18 +56,12 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    token_data = decode_access_token(token)
-    user = get_user_by_username(token_data.username)
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-        )
+async def get_me(current_user: UserInDB = Depends(get_current_active_user)):
+    """Get current authenticated user information"""
     return UserResponse(
-        _id=user.id,
-        username=user.username,
-        email=user.email,
-        is_active=user.is_active,
-        created_at=user.created_at,
+        _id=current_user.id,
+        username=current_user.username,
+        email=current_user.email,
+        is_active=current_user.is_active,
+        created_at=current_user.created_at,
     )
