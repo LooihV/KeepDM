@@ -7,7 +7,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import type { ColumnDef, SortingState } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal, Eye, Pencil, Trash2, Table as TableIcon } from "lucide-react"
+import { ArrowUpDown, MoreHorizontal, Eye, Pencil, Trash2, Table as TableIcon, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -177,6 +177,11 @@ export function Upload() {
               <DropdownMenuItem onClick={() => navigate(`/upload/${file.data_id}/preview`)}>
                 <TableIcon className="mr-2 h-4 w-4" />
                 Preview
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate(`/dashboard/create?data_id=${file.data_id}`)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Dashboard
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => console.log("Editar", file.data_id)}>

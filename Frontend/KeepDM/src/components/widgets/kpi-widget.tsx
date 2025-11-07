@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { WidgetError } from "./widget-error"
 
 interface KPIWidgetProps {
   title: string
@@ -8,6 +9,11 @@ interface KPIWidgetProps {
 }
 
 export function KPIWidget({ title, value, label, format = 'number' }: KPIWidgetProps) {
+  // Validar que los datos existan
+  if (value === undefined || value === null || isNaN(value)) {
+    return <WidgetError title={title} message="El valor del KPI es undefined, null o no es un número válido" />
+  }
+
   const formatValue = (val: number) => {
     switch (format) {
       case 'currency':
@@ -29,14 +35,14 @@ export function KPIWidget({ title, value, label, format = 'number' }: KPIWidgetP
   }
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col h-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col justify-center">
-        <div className="text-3xl font-bold">{formatValue(value)}</div>
+      <CardContent className="flex-1 flex flex-col justify-center pb-4">
+        <div className="text-5xl font-bold">{formatValue(value)}</div>
         {label && (
           <p className="text-xs text-muted-foreground mt-1">{label}</p>
         )}

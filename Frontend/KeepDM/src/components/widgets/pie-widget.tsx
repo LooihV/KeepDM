@@ -8,6 +8,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import type { ChartConfig } from "@/components/ui/chart"
+import { WidgetError } from "./widget-error"
 
 interface PieWidgetProps {
   title: string
@@ -28,6 +29,20 @@ export function PieWidget({
   data,
   colors = DEFAULT_COLORS,
 }: PieWidgetProps) {
+  // Validar que los datos existan y sean válidos
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return <WidgetError title={title} message="Los datos del gráfico son undefined, no son un array o están vacíos" />
+  }
+
+  // Validar que cada elemento tenga las propiedades necesarias
+  const hasInvalidData = data.some(
+    item => item === undefined || item === null || item.label === undefined || item.value === undefined || isNaN(item.value)
+  )
+
+  if (hasInvalidData) {
+    return <WidgetError title={title} message="Algunos elementos de los datos tienen propiedades undefined o valores inválidos" />
+  }
+
   // Transformar data al formato que espera recharts
   const chartData = data.map((item, index) => ({
     name: item.label,
@@ -50,11 +65,11 @@ export function PieWidget({
       <CardHeader className="pb-2">
         <CardTitle className="text-base">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex items-center justify-center">
-        <ChartContainer config={chartConfig} className="h-full w-full max-h-[250px]">
+      <CardContent className="flex-1 flex items-center justify-center pb-0">
+        <ChartContainer config={chartConfig} className="aspect-auto h-full w-full">
           <PieChart>
             <ChartTooltip
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent nameKey="name" />}
             />
             <Pie
               data={chartData}
@@ -63,9 +78,6 @@ export function PieWidget({
               cx="50%"
               cy="50%"
               outerRadius="80%"
-              label={({ name, percent }) => 
-                `${name}: ${(percent * 100).toFixed(0)}%`
-              }
               labelLine={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1 }}
             >
               {chartData.map((entry, index) => (
@@ -73,8 +85,8 @@ export function PieWidget({
               ))}
             </Pie>
             <Legend
-              verticalAlign="bottom"
-              height={36}
+              verticalAlign="top"
+              height={20}
               formatter={(value) => {
                 const item = data.find(d => d.label === value)
                 return `${value} (${item?.value || 0})`

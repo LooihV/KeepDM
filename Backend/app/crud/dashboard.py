@@ -116,6 +116,18 @@ def process_widget_data(
             if col in df.columns:
                 df = df[df[col] == value]
 
+    if aggregation is None and len(columns) >= 1:
+        selected_cols = [col for col in columns if col in df.columns]
+        if not selected_cols:
+            return {"columns": columns, "rows": []}
+
+        table_data = df[selected_cols].head(100)
+
+        return {
+            "columns": selected_cols,
+            "rows": table_data.values.tolist(),
+        }
+
     if len(columns) == 1:
         col = columns[0]
         if col not in df.columns:

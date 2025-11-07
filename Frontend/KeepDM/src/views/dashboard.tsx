@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { BarChart3, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { DashboardEmpty } from "@/components/dashboard-empty"
 import { dashboardService, type Dashboard } from "@/api/services/dashboard.service"
 
 export function Dashboard() {
@@ -25,6 +25,10 @@ export function Dashboard() {
     fetchDashboards()
   }, [])
 
+  const handleCreateDashboard = () => {
+    navigate("/upload")
+  }
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <div className="flex flex-col gap-2">
@@ -45,15 +49,7 @@ export function Dashboard() {
         </div>
       ) : dashboards.length === 0 ? (
         <div className="flex items-center justify-center min-h-[400px]">
-          <Card className="border-dashed">
-            <CardHeader className="text-center">
-              <BarChart3 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <CardTitle>No tienes dashboards</CardTitle>
-              <CardDescription>
-                Crea tu primer dashboard para comenzar a visualizar tus datos
-              </CardDescription>
-            </CardHeader>
-          </Card>
+          <DashboardEmpty onCreateClick={handleCreateDashboard} />
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">

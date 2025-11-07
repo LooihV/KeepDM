@@ -8,6 +8,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import type { ChartConfig } from "@/components/ui/chart"
+import { WidgetError } from "./widget-error"
 
 interface BarWidgetProps {
   title: string
@@ -24,6 +25,20 @@ export function BarWidget({
   labelKey = "label",
   color = "var(--chart-1)",
 }: BarWidgetProps) {
+  // Validar que los datos existan y sean válidos
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return <WidgetError title={title} message="Los datos del gráfico son undefined, no son un array o están vacíos" />
+  }
+
+  // Validar que cada elemento tenga las propiedades necesarias
+  const hasInvalidData = data.some(
+    item => item === undefined || item === null || item.label === undefined || item.value === undefined || isNaN(item.value)
+  )
+
+  if (hasInvalidData) {
+    return <WidgetError title={title} message="Algunos elementos de los datos tienen propiedades undefined o valores inválidos" />
+  }
+
   // Transformar data al formato que espera recharts
   const chartData = data.map((item) => ({
     [labelKey]: item.label,
@@ -42,8 +57,8 @@ export function BarWidget({
       <CardHeader className="pb-2">
         <CardTitle className="text-base">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="flex-1">
-        <ChartContainer config={chartConfig} className="h-full w-full">
+      <CardContent className="flex-1 pb-0">
+        <ChartContainer config={chartConfig} className="aspect-auto h-full w-full">
           <BarChart
             accessibilityLayer
             data={chartData}
@@ -86,7 +101,7 @@ export function BarWidget({
             />
             <ChartTooltip
               cursor={{ fill: 'rgba(0,0,0,0.1)' }}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent nameKey={labelKey} />}
             />
             <Bar
               dataKey={dataKey}
