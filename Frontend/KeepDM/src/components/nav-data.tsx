@@ -13,10 +13,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-export function NavProjects({
-  projects,
+export function NavData({
+  items,
 }: {
-  projects: {
+  items: {
     name: string
     url: string
     icon: LucideIcon
@@ -26,9 +26,9 @@ export function NavProjects({
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
+      <SidebarGroupLabel>Data</SidebarGroupLabel>
       <SidebarMenu>
-        {projects.map((item) => (
+        {items.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild isActive={location.pathname === item.url}>
               <a href={item.url}>

@@ -2,14 +2,16 @@
 
 import * as React from "react"
 import {
-  User,
   LayoutDashboard,
-  Database,
+  FileText,
+  Table as TableIcon,
+  Upload as UploadIcon,
   Settings,
 } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
+// import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
+import { NavData } from "@/components/nav-data"
 import { NavUser } from "@/components/nav-user"
 import { NavSettings } from "@/components/nav-settings"
 import { TeamSwitcher } from "@/components/team-switcher"
@@ -23,39 +25,29 @@ import {
 
 // This is sample data.
 const data = {
-  navMain: [
-    {
-      title: "Data",
-      url: "#",
-      icon: Database,
-      isActive: false,
-      items: [
-        {
-          title: "Table",
-          url: "/table",
-        },
-        {
-          title: "Upload",
-          url: "/upload",
-        },
-        {
-          title: "Export",
-          url: "#",
-        },
-      ],
-    },
-  ],
   projects: [
     {
       name: "Dashboard",
       url: "/dashboard",
       icon: LayoutDashboard,
     },
+  ],
+  dataItems: [
     {
-      name: "Profile",
-      url: "/profile",
-      icon: User,
-    }
+      name: "Templates",
+      url: "/templates",
+      icon: FileText,
+    },
+    {
+      name: "Table",
+      url: "/table",
+      icon: TableIcon,
+    },
+    {
+      name: "Upload",
+      url: "/upload",
+      icon: UploadIcon,
+    },
   ],
   settings: [
     { 
@@ -74,7 +66,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavProjects projects={data.projects} />
-        <NavMain items={data.navMain} />
+        <NavData items={data.dataItems} />
         <NavSettings settings={data.settings} />
       </SidebarContent>
       <SidebarFooter>
