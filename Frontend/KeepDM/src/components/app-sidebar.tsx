@@ -48,12 +48,12 @@ const data = {
   projects: [
     {
       name: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: LayoutDashboard,
     },
     {
       name: "Profile",
-      url: "#",
+      url: "/profile",
       icon: User,
     }
   ],

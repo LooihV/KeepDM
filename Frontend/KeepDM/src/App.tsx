@@ -11,6 +11,7 @@ import { Dashboard } from '@/views/dashboard'
 import { TableManager } from '@/views/table-manager'
 import { Table } from '@/views/table'
 import { Upload } from '@/views/upload'
+import { Profile } from '@/views/profile'
 
 function App() {
   return (
@@ -60,6 +61,13 @@ function App() {
         <ProtectedRoute>
           <PageLayout breadcrumbPage="Cargar Datos">
             <Upload />
+          </PageLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <PageLayout breadcrumbPage="Perfil">
+            <Profile />
           </PageLayout>
         </ProtectedRoute>
       } />

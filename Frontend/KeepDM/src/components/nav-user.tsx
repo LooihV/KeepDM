@@ -100,7 +100,7 @@ export function NavUser() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <a href="#">
+                <a href="/profile">
                   <UserCircle />
                   Profile
                 </a>
