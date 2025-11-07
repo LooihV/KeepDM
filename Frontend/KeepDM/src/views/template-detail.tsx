@@ -14,7 +14,8 @@ import {
   Check, 
   Mail,
   FileSpreadsheet,
-  Pencil
+  Pencil,
+  Trash2
 } from "lucide-react"
 import { templateService, type Template } from "@/api/services/template.service"
 
@@ -34,6 +35,7 @@ export function TemplateDetail() {
   const [template, setTemplate] = useState<Template | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isDownloading, setIsDownloading] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     const fetchTemplate = async () => {
@@ -91,6 +93,33 @@ export function TemplateDetail() {
       })
     } finally {
       setIsDownloading(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!id) return
+
+    const confirmed = window.confirm(
+      `¿Estás seguro de que deseas eliminar el template "${template?.name}"?\n\nEsta acción no se puede deshacer.`
+    )
+
+    if (!confirmed) return
+
+    setIsDeleting(true)
+    try {
+      await templateService.delete(id)
+      
+      toast.success("Template eliminado", {
+        description: `El template "${template?.name}" ha sido eliminado exitosamente`,
+      })
+
+      setTimeout(() => navigate("/templates"), 1500)
+    } catch (error) {
+      toast.error("Error al eliminar el template", {
+        description: error instanceof Error ? error.message : "Por favor, intenta de nuevo",
+      })
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -251,6 +280,35 @@ export function TemplateDetail() {
                 })}
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Delete Section */}
+        <Card className="border-destructive/50">
+          <CardHeader>
+            <CardTitle className="text-destructive">Zona de Peligro</CardTitle>
+            <CardDescription>
+              Eliminar este template de forma permanente
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-sm font-medium">Eliminar este template</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Esta acción no se puede deshacer. Todos los datos asociados se eliminarán permanentemente.
+                </p>
+              </div>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={isDeleting || isDownloading}
+                className="ml-4"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                {isDeleting ? "Eliminando..." : "Eliminar Template"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

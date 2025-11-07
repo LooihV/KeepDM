@@ -41,4 +41,8 @@ export const templateService = {
     const response = await apiClient.put<Template>(`/api/templates/${id}`, data)
     return response.data
   },
+
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(`/api/templates/${id}`)
+  },
 }
