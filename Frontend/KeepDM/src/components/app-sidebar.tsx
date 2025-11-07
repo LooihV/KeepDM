@@ -4,7 +4,6 @@ import * as React from "react"
 import {
   LayoutDashboard,
   FileText,
-  Table as TableIcon,
   Upload as UploadIcon,
   Settings,
 } from "lucide-react"
@@ -27,31 +26,26 @@ import {
 const data = {
   projects: [
     {
-      name: "Dashboard",
+      name: "Dashboards",
       url: "/dashboard",
       icon: LayoutDashboard,
     },
   ],
   dataItems: [
     {
-      name: "Templates",
+      name: "Plantillas",
       url: "/templates",
       icon: FileText,
     },
     {
-      name: "Table",
-      url: "/table",
-      icon: TableIcon,
-    },
-    {
-      name: "Upload",
+      name: "Mis datos",
       url: "/upload",
       icon: UploadIcon,
     },
   ],
   settings: [
-    { 
-      name: "Settings",
+    {
+      name: "Configuración",
       url: "#",
       icon: Settings,
     },

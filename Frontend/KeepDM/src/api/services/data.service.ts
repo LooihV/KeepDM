@@ -49,6 +49,15 @@ export interface DataFileDetail {
   visualization_suggestions: VisualizationSuggestion[]
 }
 
+export interface DataPreview {
+  data_id: string
+  name: string
+  num_rows: number
+  columns: string[]
+  preview_rows: number
+  data: Record<string, any>[]
+}
+
 export const dataService = {
   getAll: async (): Promise<DataFile[]> => {
     const response = await apiClient.get<DataFile[]>('/api/data/')
@@ -73,6 +82,13 @@ export const dataService = {
         },
       }
     )
+    return response.data
+  },
+
+  getPreview: async (id: string, limit: number = 30): Promise<DataPreview> => {
+    const response = await apiClient.get<DataPreview>(`/api/data/${id}/preview`, {
+      params: { limit }
+    })
     return response.data
   },
 }

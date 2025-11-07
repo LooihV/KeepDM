@@ -26,7 +26,7 @@ export function NavSettings({
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Settings</SidebarGroupLabel>
+      <SidebarGroupLabel>Configuración</SidebarGroupLabel>
       <SidebarMenu>
         {settings.map((item) => (
           <SidebarMenuItem key={item.name}>

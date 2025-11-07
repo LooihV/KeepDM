@@ -12,6 +12,7 @@ import { TableManager } from '@/views/table-manager'
 import { Table } from '@/views/table'
 import { Upload } from '@/views/upload'
 import { UploadDetail } from '@/views/upload-detail'
+import { UploadPreview } from '@/views/upload-preview'
 import { Profile } from '@/views/profile'
 import { Templates } from '@/views/templates'
 import { TemplateCreate } from '@/views/template-create'
@@ -73,6 +74,13 @@ function App() {
         <ProtectedRoute>
           <PageLayout breadcrumbPage="Detalle del Archivo">
             <UploadDetail />
+          </PageLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/upload/:id/preview" element={
+        <ProtectedRoute>
+          <PageLayout breadcrumbPage="Preview de Datos">
+            <UploadPreview />
           </PageLayout>
         </ProtectedRoute>
       } />
