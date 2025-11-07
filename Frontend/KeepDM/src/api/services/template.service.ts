@@ -20,8 +20,20 @@ export const templateService = {
     return response.data
   },
 
+  getById: async (id: string): Promise<Template> => {
+    const response = await apiClient.get<Template>(`/api/templates/${id}`)
+    return response.data
+  },
+
   create: async (data: CreateTemplateRequest): Promise<Template> => {
     const response = await apiClient.post<Template>('/api/templates/', data)
+    return response.data
+  },
+
+  downloadExcel: async (id: string): Promise<Blob> => {
+    const response = await apiClient.get(`/api/templates/${id}/download`, {
+      responseType: 'blob',
+    })
     return response.data
   },
 }

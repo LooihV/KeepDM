@@ -14,6 +14,7 @@ import { Upload } from '@/views/upload'
 import { Profile } from '@/views/profile'
 import { Templates } from '@/views/templates'
 import { TemplateCreate } from '@/views/template-create'
+import { TemplateDetail } from '@/views/template-detail'
 
 function App() {
   return (
@@ -84,6 +85,13 @@ function App() {
         <ProtectedRoute>
           <PageLayout breadcrumbPage="Crear Template">
             <TemplateCreate />
+          </PageLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/templates/:id" element={
+        <ProtectedRoute>
+          <PageLayout breadcrumbPage="Detalle del Template">
+            <TemplateDetail />
           </PageLayout>
         </ProtectedRoute>
       } />

@@ -92,7 +92,11 @@ export function Templates() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {templates.map((template) => (
-          <Card key={template._id} className="hover:shadow-lg transition-shadow">
+          <Card 
+            key={template._id} 
+            className="hover:shadow-lg transition-all cursor-pointer hover:border-primary"
+            onClick={() => navigate(`/templates/${template._id}`)}
+          >
             <CardHeader>
               <CardTitle className="text-xl">{template.name}</CardTitle>
               <CardDescription>
