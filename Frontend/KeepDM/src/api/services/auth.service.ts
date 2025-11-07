@@ -22,6 +22,12 @@ interface RegisterResponse {
   id: string
 }
 
+export interface User {
+  id: string
+  username: string
+  email: string
+}
+
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
     const formData = new FormData()
@@ -51,6 +57,11 @@ export const authService = {
       credentials
     )
 
+    return response.data
+  },
+
+  getCurrentUser: async (): Promise<User> => {
+    const response = await apiClient.get<User>('/api/auth/me')
     return response.data
   },
 
