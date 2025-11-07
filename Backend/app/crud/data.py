@@ -419,6 +419,20 @@ def suggest_visualizations(
                 }
             )
 
+    if text_cols:
+        for text_col in text_cols[:3]:
+            if text_col.get("unique_count", 0) <= 10:
+                suggestions.append(
+                    {
+                        "chart_type": ChartType.PIE,
+                        "title": f"Distribution of {text_col['column_name']}",
+                        "columns": [text_col["column_name"]],
+                        "aggregation": AggregationType.COUNT,
+                        "priority": 3,
+                        "description": f"Proportion of each {text_col['column_name']} category",
+                    }
+                )
+
     if date_cols and text_cols and number_cols:
         date_col = date_cols[0]
         text_col = text_cols[0]

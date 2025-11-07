@@ -118,26 +118,35 @@ def process_widget_data(
 
     if len(columns) == 1:
         col = columns[0]
+        if col not in df.columns:
+            return {"value": 0, "label": col}
+
         if aggregation == AggregationType.COUNT:
-            result = len(df)
-            return {"value": result, "label": col}
+            if df[col].dtype == "object" or str(df[col].dtype) == "category":
+                value_counts = df[col].value_counts()
+                return {
+                    "labels": value_counts.index.tolist(),
+                    "data": value_counts.values.tolist(),
+                }
+            else:
+                result = len(df)
+                return {"value": result, "label": col}
         elif aggregation in [
             AggregationType.SUM,
             AggregationType.AVG,
             AggregationType.MIN,
             AggregationType.MAX,
         ]:
-            if col in df.columns:
-                values = pd.to_numeric(df[col], errors="coerce").dropna()
-                if aggregation == AggregationType.SUM:
-                    result = float(values.sum())
-                elif aggregation == AggregationType.AVG:
-                    result = float(values.mean())
-                elif aggregation == AggregationType.MIN:
-                    result = float(values.min())
-                elif aggregation == AggregationType.MAX:
-                    result = float(values.max())
-                return {"value": round(result, 2), "label": col}
+            values = pd.to_numeric(df[col], errors="coerce").dropna()
+            if aggregation == AggregationType.SUM:
+                result = float(values.sum())
+            elif aggregation == AggregationType.AVG:
+                result = float(values.mean())
+            elif aggregation == AggregationType.MIN:
+                result = float(values.min())
+            elif aggregation == AggregationType.MAX:
+                result = float(values.max())
+            return {"value": round(result, 2), "label": col}
         return {"value": 0, "label": col}
 
     elif len(columns) == 2:

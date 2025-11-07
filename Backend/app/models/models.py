@@ -23,6 +23,7 @@ class ChartType(str, Enum):
     LINE = "line"
     BAR = "bar"
     AREA = "area"
+    PIE = "pie"
     TABLE = "table"
 
 
