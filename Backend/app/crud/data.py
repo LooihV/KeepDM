@@ -268,6 +268,18 @@ def list_data_metadata_by_user(user_id: str) -> List[DataMetadata]:
     return metadata_list
 
 
+def get_data_documents_preview(data_id: str, limit: int = 50) -> List[Dict[str, Any]]:
+    """Get preview of data documents (first N rows)"""
+    db = get_database()
+    data_documents = db.data_documents
+
+    docs = data_documents.find({"data_id": data_id}).limit(limit)
+    preview = []
+    for doc in docs:
+        preview.append(doc["row_data"])
+    return preview
+
+
 def analyze_column(
     column_name: str, column_type: str, values: List[Any]
 ) -> Dict[str, Any]:

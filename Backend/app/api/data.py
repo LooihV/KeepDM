@@ -122,6 +122,39 @@ async def get_data_analysis(
         )
 
 
+@router.get("/{data_id}/preview")
+async def preview_data(
+    data_id: str,
+    limit: int = 50,
+    current_user: UserInDB = Depends(get_current_active_user),
+):
+    metadata = get_data_metadata_by_id(data_id)
+    if not metadata:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Data not found",
+        )
+
+    if metadata.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to access this data",
+        )
+
+    from app.crud.data import get_data_documents_preview
+
+    preview_data = get_data_documents_preview(data_id, limit)
+
+    return {
+        "data_id": data_id,
+        "name": metadata.name,
+        "num_rows": metadata.num_rows,
+        "columns": metadata.columns,
+        "preview_rows": len(preview_data),
+        "data": preview_data,
+    }
+
+
 @router.get("/")
 async def list_data(current_user: UserInDB = Depends(get_current_active_user)):
     from app.crud.data import list_data_metadata_by_user
