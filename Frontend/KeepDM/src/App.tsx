@@ -11,6 +11,7 @@ import { Dashboard } from '@/views/dashboard'
 import { TableManager } from '@/views/table-manager'
 import { Table } from '@/views/table'
 import { Upload } from '@/views/upload'
+import { UploadDetail } from '@/views/upload-detail'
 import { Profile } from '@/views/profile'
 import { Templates } from '@/views/templates'
 import { TemplateCreate } from '@/views/template-create'
@@ -65,6 +66,13 @@ function App() {
         <ProtectedRoute>
           <PageLayout breadcrumbPage="Cargar Datos">
             <Upload />
+          </PageLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/upload/:id" element={
+        <ProtectedRoute>
+          <PageLayout breadcrumbPage="Detalle del Archivo">
+            <UploadDetail />
           </PageLayout>
         </ProtectedRoute>
       } />
