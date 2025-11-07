@@ -13,6 +13,7 @@ import { Table } from '@/views/table'
 import { Upload } from '@/views/upload'
 import { Profile } from '@/views/profile'
 import { Templates } from '@/views/templates'
+import { TemplateCreate } from '@/views/template-create'
 
 function App() {
   return (
@@ -76,6 +77,13 @@ function App() {
         <ProtectedRoute>
           <PageLayout breadcrumbPage="Templates">
             <Templates />
+          </PageLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/templates/create" element={
+        <ProtectedRoute>
+          <PageLayout breadcrumbPage="Crear Template">
+            <TemplateCreate />
           </PageLayout>
         </ProtectedRoute>
       } />

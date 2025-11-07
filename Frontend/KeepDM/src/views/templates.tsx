@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { Plus } from "lucide-react"
 import {
   Card,
   CardContent,
@@ -10,6 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { templateService, type Template } from "@/api/services/template.service"
 
 export function Templates() {
+  const navigate = useNavigate()
   const [templates, setTemplates] = useState<Template[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -87,46 +90,48 @@ export function Templates() {
         </p>
       </div>
 
-      {templates.length === 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>No hay templates</CardTitle>
-            <CardDescription>
-              Aún no has creado ningún template. Crea uno para empezar.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {templates.map((template) => (
-            <Card key={template._id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-xl">{template.name}</CardTitle>
-                <CardDescription>
-                  Creado {formatDate(template.created_at)}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Columnas:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {Object.entries(template.columns).map(([columnName, columnType]) => (
-                      <Badge 
-                        key={columnName} 
-                        variant={getColumnBadgeVariant(columnType)}
-                      >
-                        {columnName}: {columnType}
-                      </Badge>
-                    ))}
-                  </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {templates.map((template) => (
+          <Card key={template._id} className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle className="text-xl">{template.name}</CardTitle>
+              <CardDescription>
+                Creado {formatDate(template.created_at)}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-muted-foreground">
+                  Columnas:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(template.columns).map(([columnName, columnType]) => (
+                    <Badge 
+                      key={columnName} 
+                      variant={getColumnBadgeVariant(columnType)}
+                    >
+                      {columnName}: {columnType}
+                    </Badge>
+                  ))}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+
+        {/* Card para crear nuevo template */}
+        <Card 
+          className="border-dashed border-2 hover:shadow-lg hover:border-primary transition-all cursor-pointer"
+          onClick={() => navigate('/templates/create')}
+        >
+          <CardContent className="flex items-center justify-center min-h-[200px]">
+            <div className="flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+              <Plus className="h-12 w-12" />
+              <p className="font-medium">Crear Template</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
