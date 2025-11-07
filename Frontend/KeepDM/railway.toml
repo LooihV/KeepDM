@@ -1,6 +1,7 @@
 [build]
 builder = "dockerfile"
-dockerfilePath = "Dockerfile"
+dockerfilePath = "./Dockerfile"
+buildContext = "."
 
 [deploy]
 startCommand = "nginx -g 'daemon off;'"
