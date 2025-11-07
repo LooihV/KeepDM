@@ -116,13 +116,23 @@ class DataDocument(BaseModel):
         populate_by_name = True
 
 
+class VisualizationWidget(BaseModel):
+    position: int = Field(..., ge=1, le=6)
+    chart_type: ChartType
+    title: str = Field(..., min_length=1, max_length=100)
+    columns: list[str]
+    aggregation: Optional[AggregationType] = None
+    filters: Optional[dict[str, Any]] = None
+
+
 class DashboardConfig(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
     user_id: str
     template_id: str
     data_id: str
     name: str = Field(..., min_length=1, max_length=100)
-    config_json: dict[str, Any]
+    layout_type: str = "default_6"
+    widgets: list[VisualizationWidget]
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
