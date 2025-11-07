@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from app.api import auth, data
+from app.api import auth, data, templates
 from app.models.mongo import get_database, close_database
 
 
@@ -27,6 +27,7 @@ app.add_middleware(
 
 app.include_router(auth.router, prefix="/api")
 app.include_router(data.router, prefix="/api")
+app.include_router(templates.router, prefix="/api")
 
 
 @app.get("/")

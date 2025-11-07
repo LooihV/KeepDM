@@ -10,6 +10,14 @@ class SourceType(str, Enum):
     EXCEL = "excel"
 
 
+class ColumnType(str, Enum):
+    TEXT = "text"
+    NUMBER = "number"
+    DATE = "date"
+    BOOLEAN = "boolean"
+    EMAIL = "email"
+
+
 # User models
 class UserInDB(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
