@@ -7,7 +7,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import type { ColumnDef, SortingState } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal, Plus, Eye, Pencil, Trash2 } from "lucide-react"
+import { ArrowUpDown, MoreHorizontal, Eye, Pencil, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/table"
 import { UploadEmptyNoTemplates } from "@/components/upload-empty-no-templates"
 import { UploadEmptyNoFiles } from "@/components/upload-empty-no-files"
+import { UploadFileDialog } from "@/components/upload-file-dialog"
 import { templateService } from "@/api/services/template.service"
 import { dataService, type DataFile } from "@/api/services/data.service"
 
@@ -80,9 +81,13 @@ export function Upload() {
     fetchData()
   }, [])
 
-  const handleUploadClick = () => {
-    // Por ahora solo un placeholder
-    console.log("Subir archivo clicked")
+  const refreshData = async () => {
+    try {
+      const files = await dataService.getAll()
+      setDataFiles(files)
+    } catch (error) {
+      console.error("Error al refrescar datos:", error)
+    }
   }
 
   const columns = useMemo<ColumnDef<DataFile>[]>(() => [
@@ -226,15 +231,15 @@ export function Upload() {
         </div>
       ) : dataFiles.length === 0 ? (
         <div className="flex items-center justify-center min-h-[400px]">
-          <UploadEmptyNoFiles onUploadClick={handleUploadClick} />
+          <UploadFileDialog 
+            onUploadSuccess={refreshData}
+            trigger={<UploadEmptyNoFiles />}
+          />
         </div>
       ) : (
         <>
           <div className="flex justify-end">
-            <Button onClick={handleUploadClick}>
-              <Plus className="h-4 w-4 mr-2" />
-              Subir Archivo
-            </Button>
+            <UploadFileDialog onUploadSuccess={refreshData} />
           </div>
 
           <div className="overflow-hidden rounded-md border">

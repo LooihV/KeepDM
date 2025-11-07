@@ -10,11 +10,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 
-interface UploadEmptyNoFilesProps {
-  onUploadClick: () => void
-}
-
-export function UploadEmptyNoFiles({ onUploadClick }: UploadEmptyNoFilesProps) {
+export function UploadEmptyNoFiles() {
   return (
     <Empty className="border border-dashed">
       <EmptyHeader>
@@ -28,7 +24,7 @@ export function UploadEmptyNoFiles({ onUploadClick }: UploadEmptyNoFilesProps) {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button variant="outline" size="sm" onClick={onUploadClick}>
+        <Button variant="outline" size="sm">
           Subir Archivo
         </Button>
       </EmptyContent>

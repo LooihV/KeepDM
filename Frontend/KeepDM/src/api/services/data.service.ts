@@ -59,4 +59,20 @@ export const dataService = {
     const response = await apiClient.get<DataFileDetail>(`/api/data/${id}/analysis`)
     return response.data
   },
+
+  upload: async (templateId: string, file: File): Promise<DataFile> => {
+    const formData = new FormData()
+    formData.append('file', file)
+    
+    const response = await apiClient.post<DataFile>(
+      `/api/data/upload/${templateId}`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    )
+    return response.data
+  },
 }
