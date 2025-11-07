@@ -10,6 +10,18 @@ interface LoginResponse {
   token_type: string
 }
 
+interface RegisterCredentials {
+  username: string
+  email: string
+  password: string
+}
+
+interface RegisterResponse {
+  username: string
+  email: string
+  id: string
+}
+
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
     const formData = new FormData()
@@ -29,6 +41,15 @@ export const authService = {
     if (response.data.access_token) {
       localStorage.setItem('token', response.data.access_token)
     }
+
+    return response.data
+  },
+
+  register: async (credentials: RegisterCredentials): Promise<RegisterResponse> => {
+    const response = await apiClient.post<RegisterResponse>(
+      '/api/auth/register',
+      credentials
+    )
 
     return response.data
   },
