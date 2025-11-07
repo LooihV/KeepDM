@@ -124,4 +124,19 @@ async def get_data_analysis(
 
 @router.get("/")
 async def list_data(current_user: UserInDB = Depends(get_current_active_user)):
-    return {"message": "Data list endpoint - not implemented yet"}
+    from app.crud.data import list_data_metadata_by_user
+
+    metadata_list = list_data_metadata_by_user(current_user.id)
+
+    return [
+        {
+            "data_id": m.id,
+            "name": m.name,
+            "num_rows": m.num_rows,
+            "num_columns": len(m.columns),
+            "columns": m.columns,
+            "source_type": m.source_type,
+            "created_at": m.created_at.isoformat(),
+        }
+        for m in metadata_list
+    ]

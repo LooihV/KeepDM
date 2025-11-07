@@ -255,6 +255,19 @@ def get_data_documents_by_data_id(data_id: str) -> List[DataDocument]:
     return documents
 
 
+def list_data_metadata_by_user(user_id: str) -> List[DataMetadata]:
+    """List all data metadata for a user"""
+    db = get_database()
+    data_metadata = db.data_metadata
+
+    docs = data_metadata.find({"user_id": user_id}).sort("created_at", -1)
+    metadata_list = []
+    for doc in docs:
+        doc["_id"] = str(doc["_id"])
+        metadata_list.append(DataMetadata(**doc))
+    return metadata_list
+
+
 def analyze_column(
     column_name: str, column_type: str, values: List[Any]
 ) -> Dict[str, Any]:
