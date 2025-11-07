@@ -23,9 +23,11 @@ interface RegisterResponse {
 }
 
 export interface User {
-  id: string
+  _id: string
   username: string
   email: string
+  is_active: boolean
+  created_at: string
 }
 
 export const authService = {
