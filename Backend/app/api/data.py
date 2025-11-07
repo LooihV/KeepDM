@@ -3,7 +3,9 @@ from app.models.models import UserInDB
 from app.core.dependencies import get_current_active_user
 from app.crud.data import (
     get_data_template_by_id,
+    get_data_metadata_by_id,
     process_excel_upload,
+    analyze_data,
 )
 
 router = APIRouter(prefix="/data", tags=["data"])
@@ -63,6 +65,60 @@ async def upload_data(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error processing file: {str(e)}",
+        )
+
+
+@router.get("/{data_id}/analysis")
+async def get_data_analysis(
+    data_id: str,
+    current_user: UserInDB = Depends(get_current_active_user),
+):
+    metadata = get_data_metadata_by_id(data_id)
+    if not metadata:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Data not found",
+        )
+
+    if metadata.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to access this data",
+        )
+
+    try:
+        template = get_data_template_by_id(
+            next(
+                doc.template_id
+                for doc in [metadata]
+                if hasattr(metadata, "template_id")
+            )
+            if hasattr(metadata, "template_id")
+            else None
+        )
+
+        from app.crud.data import get_data_documents_by_data_id
+
+        documents = get_data_documents_by_data_id(data_id)
+        if not documents:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No data documents found",
+            )
+
+        template_id = documents[0].template_id
+        analysis = analyze_data(data_id, template_id)
+
+        return analysis
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error analyzing data: {str(e)}",
         )
 
 

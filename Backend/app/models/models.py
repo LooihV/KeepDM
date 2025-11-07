@@ -18,6 +18,22 @@ class ColumnType(str, Enum):
     EMAIL = "email"
 
 
+class ChartType(str, Enum):
+    KPI = "kpi"
+    LINE = "line"
+    BAR = "bar"
+    AREA = "area"
+    TABLE = "table"
+
+
+class AggregationType(str, Enum):
+    SUM = "sum"
+    AVG = "avg"
+    COUNT = "count"
+    MIN = "min"
+    MAX = "max"
+
+
 # User models
 class UserInDB(BaseModel):
     id: Optional[str] = Field(None, alias="_id")

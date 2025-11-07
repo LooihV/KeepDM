@@ -1,6 +1,14 @@
 from typing import Optional, List, Dict, Any
 from io import BytesIO
-from app.models.models import DataMetadata, DataDocument, DataTemplate, SourceType
+from app.models.models import (
+    DataMetadata,
+    DataDocument,
+    DataTemplate,
+    SourceType,
+    ColumnType,
+    ChartType,
+    AggregationType,
+)
 from app.models.mongo import get_database
 from datetime import datetime, timezone
 from bson import ObjectId
@@ -219,3 +227,238 @@ def process_excel_upload(
     )
 
     return metadata, docs_created
+
+
+# Data analysis functions
+def get_data_metadata_by_id(data_id: str) -> Optional[DataMetadata]:
+    """Get data metadata by ID"""
+    db = get_database()
+    data_metadata = db.data_metadata
+
+    doc = data_metadata.find_one({"_id": ObjectId(data_id)})
+    if doc:
+        doc["_id"] = str(doc["_id"])
+        return DataMetadata(**doc)
+    return None
+
+
+def get_data_documents_by_data_id(data_id: str) -> List[DataDocument]:
+    """Get all data documents for a specific data_id"""
+    db = get_database()
+    data_documents = db.data_documents
+
+    docs = data_documents.find({"data_id": data_id})
+    documents = []
+    for doc in docs:
+        doc["_id"] = str(doc["_id"])
+        documents.append(DataDocument(**doc))
+    return documents
+
+
+def analyze_column(
+    column_name: str, column_type: str, values: List[Any]
+) -> Dict[str, Any]:
+    """Analyze a single column and return statistics"""
+    clean_values = [v for v in values if v != "" and v is not None]
+    total_count = len(values)
+    non_null_count = len(clean_values)
+    null_count = total_count - non_null_count
+
+    analysis = {
+        "column_name": column_name,
+        "column_type": column_type,
+        "total_count": total_count,
+        "non_null_count": non_null_count,
+        "null_count": null_count,
+        "null_percentage": (
+            round((null_count / total_count * 100), 2) if total_count > 0 else 0
+        ),
+    }
+
+    if column_type == ColumnType.NUMBER and clean_values:
+        numeric_values = [
+            float(v)
+            for v in clean_values
+            if isinstance(v, (int, float))
+            or str(v).replace(".", "", 1).replace("-", "", 1).isdigit()
+        ]
+        if numeric_values:
+            analysis.update(
+                {
+                    "min": min(numeric_values),
+                    "max": max(numeric_values),
+                    "avg": round(sum(numeric_values) / len(numeric_values), 2),
+                    "sum": round(sum(numeric_values), 2),
+                }
+            )
+
+    elif column_type == ColumnType.TEXT and clean_values:
+        unique_values = list(set(clean_values))
+        analysis.update(
+            {
+                "unique_count": len(unique_values),
+                "sample_values": unique_values[:5],
+                "is_categorical": len(unique_values) <= 20,
+            }
+        )
+
+    elif column_type == ColumnType.DATE and clean_values:
+        analysis.update(
+            {
+                "min_date": str(min(clean_values)),
+                "max_date": str(max(clean_values)),
+                "date_range_days": (
+                    (
+                        pd.to_datetime(max(clean_values))
+                        - pd.to_datetime(min(clean_values))
+                    ).days
+                    if len(clean_values) > 1
+                    else 0
+                ),
+            }
+        )
+
+    elif column_type == ColumnType.BOOLEAN and clean_values:
+        true_count = sum(
+            1 for v in clean_values if str(v).lower() in ["true", "1", "yes", "si"]
+        )
+        false_count = non_null_count - true_count
+        analysis.update(
+            {
+                "true_count": true_count,
+                "false_count": false_count,
+                "true_percentage": (
+                    round((true_count / non_null_count * 100), 2)
+                    if non_null_count > 0
+                    else 0
+                ),
+            }
+        )
+
+    return analysis
+
+
+def suggest_visualizations(
+    template: DataTemplate, column_analyses: List[Dict[str, Any]]
+) -> List[Dict[str, Any]]:
+    """Suggest visualizations based on data analysis"""
+    suggestions = []
+
+    date_cols = [c for c in column_analyses if c["column_type"] == ColumnType.DATE]
+    number_cols = [c for c in column_analyses if c["column_type"] == ColumnType.NUMBER]
+    text_cols = [
+        c
+        for c in column_analyses
+        if c["column_type"] == ColumnType.TEXT and c.get("is_categorical", False)
+    ]
+
+    # Rule-based suggestions:
+    if number_cols:
+        for num_col in number_cols[:3]:
+            suggestions.append(
+                {
+                    "chart_type": ChartType.KPI,
+                    "title": f"Total {num_col['column_name']}",
+                    "columns": [num_col["column_name"]],
+                    "aggregation": AggregationType.SUM,
+                    "priority": 1,
+                    "description": f"Display sum of {num_col['column_name']}",
+                }
+            )
+
+    if date_cols and number_cols:
+        date_col = date_cols[0]
+        for num_col in number_cols[:2]:
+            suggestions.append(
+                {
+                    "chart_type": ChartType.LINE,
+                    "title": f"{num_col['column_name']} over time",
+                    "columns": [date_col["column_name"], num_col["column_name"]],
+                    "aggregation": AggregationType.SUM,
+                    "priority": 2,
+                    "description": f"Time series showing {num_col['column_name']} trends",
+                }
+            )
+
+    if text_cols and number_cols:
+        text_col = text_cols[0]
+        for num_col in number_cols[:2]:
+            suggestions.append(
+                {
+                    "chart_type": ChartType.BAR,
+                    "title": f"{num_col['column_name']} by {text_col['column_name']}",
+                    "columns": [text_col["column_name"], num_col["column_name"]],
+                    "aggregation": AggregationType.SUM,
+                    "priority": 3,
+                    "description": f"Compare {num_col['column_name']} across {text_col['column_name']}",
+                }
+            )
+
+    if date_cols and text_cols and number_cols:
+        date_col = date_cols[0]
+        text_col = text_cols[0]
+        num_col = number_cols[0]
+        suggestions.append(
+            {
+                "chart_type": ChartType.LINE,
+                "title": f"{num_col['column_name']} by {text_col['column_name']} over time",
+                "columns": [
+                    date_col["column_name"],
+                    text_col["column_name"],
+                    num_col["column_name"],
+                ],
+                "aggregation": AggregationType.SUM,
+                "priority": 4,
+                "description": f"Multi-series comparison of {num_col['column_name']} across {text_col['column_name']}",
+            }
+        )
+
+    if len(column_analyses) >= 2:
+        suggestions.append(
+            {
+                "chart_type": ChartType.TABLE,
+                "title": "Data Table",
+                "columns": [c["column_name"] for c in column_analyses[:5]],
+                "aggregation": None,
+                "priority": 5,
+                "description": "Detailed view of all data",
+            }
+        )
+
+    return sorted(suggestions, key=lambda x: x["priority"])
+
+
+def analyze_data(data_id: str, template_id: str) -> Dict[str, Any]:
+    """Analyze uploaded data and suggest visualizations"""
+    metadata = get_data_metadata_by_id(data_id)
+    if not metadata:
+        raise ValueError("Data not found")
+
+    template = get_data_template_by_id(template_id)
+    if not template:
+        raise ValueError("Template not found")
+
+    documents = get_data_documents_by_data_id(data_id)
+    if not documents:
+        raise ValueError("No data documents found")
+
+    column_data = {col: [] for col in template.columns.keys()}
+    for doc in documents:
+        for col in template.columns.keys():
+            column_data[col].append(doc.row_data.get(col))
+
+    column_analyses = []
+    for col_name, col_type in template.columns.items():
+        analysis = analyze_column(col_name, col_type, column_data[col_name])
+        column_analyses.append(analysis)
+
+    suggestions = suggest_visualizations(template, column_analyses)
+
+    return {
+        "data_id": data_id,
+        "template_id": template_id,
+        "num_rows": metadata.num_rows,
+        "num_columns": len(template.columns),
+        "column_analyses": column_analyses,
+        "visualization_suggestions": suggestions,
+    }
