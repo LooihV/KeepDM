@@ -13,10 +13,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-export function NavSettings({
-  settings,
+export function NavData({
+  items,
 }: {
-  settings: {
+  items: {
     name: string
     url: string
     icon: LucideIcon
@@ -26,9 +26,9 @@ export function NavSettings({
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Configuración</SidebarGroupLabel>
+      <SidebarGroupLabel>Data</SidebarGroupLabel>
       <SidebarMenu>
-        {settings.map((item) => (
+        {items.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild isActive={location.pathname === item.url}>
               <a href={item.url}>

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { toast } from 'sonner'
 import { API_CONFIG } from './config'
 
 export const apiClient = axios.create({
@@ -30,6 +31,17 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
+      if (error.response.status === 401) {
+        console.warn('Token expirado o no válido. Redirigiendo al login...')
+        toast.error('Sesión expirada', {
+          description: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+        })
+        localStorage.removeItem('token')
+        // Esperar un momento para que se muestre el toast
+        setTimeout(() => {
+          window.location.href = '/login'
+        }, 2000)
+      }
       console.error('Error de respuesta:', error.response.data)
     } else if (error.request) {
       console.error('Error de red:', error.request)

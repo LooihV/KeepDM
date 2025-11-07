@@ -1,0 +1,7 @@
+export { KPIWidget } from './kpi-widget'
+export { BarWidget } from './bar-widget'
+export { LineWidget } from './line-widget'
+export { AreaWidget } from './area-widget'
+export { PieWidget } from './pie-widget'
+export { TableWidget } from './table-widget'
+export { WidgetError } from './widget-error'

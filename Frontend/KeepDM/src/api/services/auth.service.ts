@@ -10,6 +10,26 @@ interface LoginResponse {
   token_type: string
 }
 
+interface RegisterCredentials {
+  username: string
+  email: string
+  password: string
+}
+
+interface RegisterResponse {
+  username: string
+  email: string
+  id: string
+}
+
+export interface User {
+  _id: string
+  username: string
+  email: string
+  is_active: boolean
+  created_at: string
+}
+
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
     const formData = new FormData()
@@ -33,8 +53,26 @@ export const authService = {
     return response.data
   },
 
+  register: async (credentials: RegisterCredentials): Promise<RegisterResponse> => {
+    const response = await apiClient.post<RegisterResponse>(
+      '/api/auth/register',
+      credentials
+    )
+
+    return response.data
+  },
+
+  getCurrentUser: async (): Promise<User> => {
+    const response = await apiClient.get<User>('/api/auth/me')
+    return response.data
+  },
+
   logout: () => {
+    // Eliminar el token del localStorage
     localStorage.removeItem('token')
+    
+    // Redirigir a la página de login
+    window.location.href = '/login'
   },
 
   getToken: (): string | null => {

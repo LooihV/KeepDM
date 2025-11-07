@@ -2,14 +2,15 @@
 
 import * as React from "react"
 import {
-  User,
   LayoutDashboard,
-  Database,
+  FileText,
+  Upload as UploadIcon,
   Settings,
 } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
+// import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
+import { NavData } from "@/components/nav-data"
 import { NavUser } from "@/components/nav-user"
 import { NavSettings } from "@/components/nav-settings"
 import { TeamSwitcher } from "@/components/team-switcher"
@@ -23,48 +24,28 @@ import {
 
 // This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Data",
-      url: "#",
-      icon: Database,
-      isActive: true,
-      items: [
-        {
-          title: "Table",
-          url: "#",
-        },
-        {
-          title: "Upload",
-          url: "#",
-        },
-        {
-          title: "Export",
-          url: "#",
-        },
-      ],
-    },
-  ],
   projects: [
     {
-      name: "Dashboard",
-      url: "#",
+      name: "Dashboards",
+      url: "/dashboard",
       icon: LayoutDashboard,
     },
+  ],
+  dataItems: [
     {
-      name: "Profile",
-      url: "#",
-      icon: User,
-    }
+      name: "Plantillas",
+      url: "/templates",
+      icon: FileText,
+    },
+    {
+      name: "Mis datos",
+      url: "/upload",
+      icon: UploadIcon,
+    },
   ],
   settings: [
-    { 
-      name: "Settings",
+    {
+      name: "Configuración",
       url: "#",
       icon: Settings,
     },
@@ -79,11 +60,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavProjects projects={data.projects} />
-        <NavMain items={data.navMain} />
+        <NavData items={data.dataItems} />
         <NavSettings settings={data.settings} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
