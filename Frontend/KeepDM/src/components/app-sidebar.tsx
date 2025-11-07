@@ -28,15 +28,15 @@ const data = {
       title: "Data",
       url: "#",
       icon: Database,
-      isActive: true,
+      isActive: false,
       items: [
         {
           title: "Table",
-          url: "#",
+          url: "/table",
         },
         {
           title: "Upload",
-          url: "#",
+          url: "/upload",
         },
         {
           title: "Export",

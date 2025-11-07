@@ -1,5 +1,6 @@
 "use client"
 
+import { useLocation } from "react-router-dom"
 import {
   type LucideIcon,
 } from "lucide-react"
@@ -21,13 +22,15 @@ export function NavSettings({
     icon: LucideIcon
   }[]
 }) {
+  const location = useLocation()
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Settings</SidebarGroupLabel>
       <SidebarMenu>
         {settings.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton asChild isActive={location.pathname === item.url}>
               <a href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>
