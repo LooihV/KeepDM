@@ -13,9 +13,9 @@ def get_database():
             client = MongoClient(settings.mongo_uri, serverSelectionTimeoutMS=5000)
             db = client[settings.MONGO_DB]
             # Verify connection
-            client.admin.command('ping')
+            client.admin.command("ping")
             print("Successfully connected to MongoDB.")
-            
+
             db.users.create_index("username", unique=True)
             db.users.create_index("email", unique=True)
         except Exception as e:
