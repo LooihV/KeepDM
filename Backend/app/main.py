@@ -9,7 +9,10 @@ from app.models.mongo import get_database, close_database
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    get_database()
+    try:
+        get_database()
+    except Exception as e:
+        print(f"Startup Warning: Database connection failed: {e}")
     yield
     # Shutdown
     close_database()
