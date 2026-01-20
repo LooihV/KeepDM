@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Download, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { toast } from "sonner"
 import { 
   dashboardService, 
   type DashboardData, 
@@ -12,12 +13,15 @@ import {
 } from "@/api/services/dashboard.service"
 import { KPIWidget, BarWidget, LineWidget, AreaWidget, PieWidget, TableWidget } from "@/components/widgets"
 import { WidgetError } from "@/components/widgets/widget-error"
+import { exportElementToPdf } from "@/lib/export-to-pdf"
 
 export function DashboardDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const exportRef = useRef<HTMLDivElement | null>(null)
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isExporting, setIsExporting] = useState(false)
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -195,11 +199,16 @@ export function DashboardDetail() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+    <div ref={exportRef} className="flex flex-1 flex-col gap-4 p-4 pt-0">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="sm" onClick={() => navigate("/dashboard")}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("/dashboard")}
+            data-export-ignore="true"
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>
@@ -210,6 +219,44 @@ export function DashboardDetail() {
             </p>
           </div>
         </div>
+
+        <Button
+          variant="outline"
+          onClick={async () => {
+            const element = exportRef.current
+            if (!element) {
+              toast.error("No se pudo exportar: no se encontró el contenido del dashboard")
+              return
+            }
+
+            let toastId: string | number | undefined
+            try {
+              setIsExporting(true)
+              toastId = toast.loading("Generando PDF...")
+              await exportElementToPdf({
+                element,
+                fileName: `dashboard-${dashboardData.name}`,
+                marginMm: 10,
+                pixelRatio: 2,
+              })
+              toast.success("PDF descargado", toastId ? { id: toastId } : undefined)
+            } catch (error) {
+              console.error("Error al exportar PDF:", error)
+              toast.error("No se pudo generar el PDF", toastId ? { id: toastId } : undefined)
+            } finally {
+              setIsExporting(false)
+            }
+          }}
+          disabled={isExporting}
+          data-export-ignore="true"
+        >
+          {isExporting ? (
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          ) : (
+            <Download className="h-4 w-4 mr-2" />
+          )}
+          Descargar PDF
+        </Button>
       </div>
 
       {/* Dashboard Grid Layout */}
