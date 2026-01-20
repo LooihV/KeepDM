@@ -8,10 +8,19 @@ db = None
 def get_database():
     global client, db
     if client is None:
-        client = MongoClient(settings.mongo_uri)
-        db = client[settings.MONGO_DB]
-        db.users.create_index("username", unique=True)
-        db.users.create_index("email", unique=True)
+        try:
+            print(f"Connecting to MongoDB at {settings.mongo_uri}...")
+            client = MongoClient(settings.mongo_uri, serverSelectionTimeoutMS=5000)
+            db = client[settings.MONGO_DB]
+            # Verify connection
+            client.admin.command('ping')
+            print("Successfully connected to MongoDB.")
+            
+            db.users.create_index("username", unique=True)
+            db.users.create_index("email", unique=True)
+        except Exception as e:
+            print(f"CRITICAL: Could not connect to MongoDB: {e}")
+            raise e
     return db
 
 
